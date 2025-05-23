@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -15,14 +17,19 @@ public class LocaisFerramentas {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false) // Definindo como NOT NULL
+    @Column(nullable = false, length = 100) // Definindo como NOT NULL
     private String nome_espaco;
 
-    @Column(nullable = false) // Definindo como NOT NULL
+    @Column(nullable = false, length = 50) // Definindo como NOT NULL
     private String armario;
 
-    @Column(nullable = false) // Definindo como NOT NULL
+    @Column(nullable = false, length = 50) // Definindo como NOT NULL
     private String prateleira;
 
+    @Column(length = 50)
     private String estojo;
+
+    // Relacionamento
+    @OneToMany(mappedBy = "local")
+    private List<Ferramentas> ferramentas;
 }

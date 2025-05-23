@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -15,8 +17,13 @@ public class EstadosFerramentas {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false) // Definindo como NOT NULL
+    @Column(nullable = false, length = 100) // Definindo como NOT NULL
     private String nome_estado;
 
+    @Column(length = 255)
     private String descricao;
+
+    // Relacionamento
+    @OneToMany(mappedBy = "estado")
+    private List<Ferramentas> ferramentas;
 }

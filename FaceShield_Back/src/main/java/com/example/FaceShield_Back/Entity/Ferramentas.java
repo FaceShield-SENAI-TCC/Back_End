@@ -15,13 +15,13 @@ public class Ferramentas {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false) // Definindo como NOT NULL
+    @Column(nullable = false, length = 100) // Definindo como NOT NULL
     private String nome;
 
-    @Column(nullable = false) // Definindo como NOT NULL
+    @Column(nullable = false, length = 100) // Definindo como NOT NULL
     private String marca;
 
-    @Column(nullable = false) // Definindo como NOT NULL
+    @Column(nullable = false, length = 100) // Definindo como NOT NULL
     private String modelo;
 
     @Column(nullable = false) // Definindo como NOT NULL
@@ -30,5 +30,15 @@ public class Ferramentas {
     @Column(nullable = false) // Definindo como NOT NULL
     private boolean disponibilidade;
 
+    @Column(length = 255)
     private String descricao;
+
+    // Relacionamentos
+    @ManyToOne
+    @JoinColumn(name = "id_estado", nullable = false)
+    private EstadosFerramentas estado;
+
+    @ManyToOne
+    @JoinColumn(name = "id_local", nullable = false)
+    private LocaisFerramentas local;
 }
