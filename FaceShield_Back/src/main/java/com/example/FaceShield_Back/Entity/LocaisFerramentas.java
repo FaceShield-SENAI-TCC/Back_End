@@ -32,4 +32,13 @@ public class LocaisFerramentas {
     // Relacionamento
     @OneToMany(mappedBy = "local")
     private List<Ferramentas> ferramentas;
+
+    // Construtor personalizado
+    public LocaisFerramentas(Long id, String nome_espaco, String armario, String prateleira, String estojo) {
+        this.id = id;
+        this.nome_espaco = nome_espaco;
+        this.armario = armario;
+        this.prateleira = prateleira;
+        this.estojo = estojo;
+    }
 }

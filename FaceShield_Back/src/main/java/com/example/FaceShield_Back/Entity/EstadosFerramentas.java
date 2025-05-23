@@ -26,4 +26,11 @@ public class EstadosFerramentas {
     // Relacionamento
     @OneToMany(mappedBy = "estado")
     private List<Ferramentas> ferramentas;
+
+    // Construtor personalizado
+    public EstadosFerramentas(Long id, String nome_estado, String descricao) {
+        this.id = id;
+        this.nome_estado = nome_estado;
+        this.descricao = descricao;
+    }
 }
