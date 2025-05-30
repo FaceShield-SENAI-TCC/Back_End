@@ -27,7 +27,7 @@ public class LocaisFerramentasDTO {
         );
     }
 
-    public LocaisFerramentasDTO fromProfessor(LocaisFerramentas locaisFerramentas) {
+    public LocaisFerramentasDTO fromLocaisFerramentasDTO(LocaisFerramentas locaisFerramentas) {
         return new LocaisFerramentasDTO(
                 locaisFerramentas.getId(),
                 locaisFerramentas.getNome_espaco(),
