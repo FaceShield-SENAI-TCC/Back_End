@@ -31,4 +31,52 @@ public class FerramentasServ {
             return Optional.empty();
         }
     }
+
+    // Buscar pelo NOME da ferramenta
+    public List<Ferramentas> getAllByNome(String nome) {
+        return repository.findAllByNome(nome);
+    }
+
+    // Criando nova Ferramenta
+    public FerramentasDTO createFerramenta(FerramentasDTO ferramentasDTO) {
+        Ferramentas ferramentas = ferramentasDTO.toFerramentas();
+        ferramentas = repository.save(ferramentas);
+
+        return ferramentasDTO.fromFerramentas(ferramentas);
+    }
+
+    // Atualizando Ferramenta
+    public Optional<FerramentasDTO> updateFerramenta(Long idFerramenta, FerramentasDTO dto) {
+        Optional<Ferramentas> optional = repository.findById(idFerramenta);
+
+        if (optional.isPresent()) {
+            Ferramentas ferramenta = optional.get();
+
+            ferramenta.setNome(dto.getNome());
+            ferramenta.setMarca(dto.getMarca());
+            ferramenta.setModelo(dto.getModelo());
+            ferramenta.setQuantidade(dto.getQuantidade());
+            ferramenta.setDisponibilidade(dto.isDisponibilidade());
+            ferramenta.setDescricao(dto.getDescricao());
+            ferramenta.setEstado(dto.toFerramentas().getEstado());
+            ferramenta.setLocal(dto.toFerramentas().getLocal());
+
+            ferramenta = repository.save(ferramenta);
+
+            return Optional.of(dto.fromFerramentas(ferramenta));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    // Remover ferramenta
+    public boolean deleteFerramenta(Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
