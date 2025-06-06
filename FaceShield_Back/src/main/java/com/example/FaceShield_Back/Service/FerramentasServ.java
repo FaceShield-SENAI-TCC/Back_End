@@ -45,6 +45,21 @@ public class FerramentasServ {
         return ferramentasDTO.fromFerramentas(ferramentas);
     }
 
+    // Buscar ferramentas disponíveis
+    public List<Ferramentas> getFerramentasDisponiveis() {
+        return repository.findByDisponibilidadeTrue();
+    }
+
+    // Buscar ferramentas por local
+    public List<Ferramentas> getFerramentasByLocal(Long idLocal) {
+        return repository.findByLocalId(idLocal);
+    }
+
+    // Buscar ferramentas por estado
+    public List<Ferramentas> getFerramentasByEstado(Long idEstado) {
+        return repository.findByEstadoId(idEstado);
+    }
+
     // Atualizando Ferramenta
     public Optional<FerramentasDTO> updateFerramenta(Long idFerramenta, FerramentasDTO dto) {
         Optional<Ferramentas> optional = repository.findById(idFerramenta);
