@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface LocaisFerramentasRepo extends JpaRepository<LocaisFerramentas, Long> {
-    List<LocaisFerramentas> findAllByNomeLocal(String nomeLocal); // Metodo para buscar pelo nome
+    List<LocaisFerramentas> findAllByNomeEspaco(String nomeEspaco); // Metodo para buscar pelo nome
 }

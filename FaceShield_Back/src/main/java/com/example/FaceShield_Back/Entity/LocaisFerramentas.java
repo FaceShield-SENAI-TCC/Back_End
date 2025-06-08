@@ -1,5 +1,6 @@
 package com.example.FaceShield_Back.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +12,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties({"ferramentas"}) // Ignora a lista de ferramentas ao serializar
 public class LocaisFerramentas {
     // Atributos
     @Id
@@ -18,7 +20,7 @@ public class LocaisFerramentas {
     private Long id;
 
     @Column(nullable = false, length = 100) // Definindo como NOT NULL
-    private String nome_espaco;
+    private String nomeEspaco;
 
     @Column(nullable = false, length = 50) // Definindo como NOT NULL
     private String armario;
@@ -34,9 +36,9 @@ public class LocaisFerramentas {
     private List<Ferramentas> ferramentas;
 
     // Construtor personalizado
-    public LocaisFerramentas(Long id, String nome_espaco, String armario, String prateleira, String estojo) {
+    public LocaisFerramentas(Long id, String nomeEspaco, String armario, String prateleira, String estojo) {
         this.id = id;
-        this.nome_espaco = nome_espaco;
+        this.nomeEspaco = nomeEspaco;
         this.armario = armario;
         this.prateleira = prateleira;
         this.estojo = estojo;

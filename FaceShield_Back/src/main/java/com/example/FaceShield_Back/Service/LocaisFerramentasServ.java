@@ -33,8 +33,8 @@ public class LocaisFerramentasServ {
     }
 
     // Buscar pelo NOME do Local
-    public List<LocaisFerramentas> getAllByNomeLocal(String nomeLocal) {
-        return repository.findAllByNomeLocal(nomeLocal);
+    public List<LocaisFerramentas> getAllByNomeLocal(String nomeEspaco) {
+        return repository.findAllByNomeEspaco(nomeEspaco); // Corrigido para usar o campo correto
     }
 
     // Criando novo Local
@@ -52,7 +52,7 @@ public class LocaisFerramentasServ {
         if (optional.isPresent()) {
             LocaisFerramentas local = optional.get();
 
-            local.setNome_espaco(localDTO.getNome_espaco());
+            local.setNomeEspaco(localDTO.getNomeEspaco());
             local.setArmario(localDTO.getArmario());
             local.setPrateleira(localDTO.getPrateleira());
             local.setEstojo(localDTO.getEstojo());
