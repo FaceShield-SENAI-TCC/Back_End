@@ -1,5 +1,6 @@
 package com.example.FaceShield_Back.Entity;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,11 @@ public class TiposUsuarios {
 
     public enum TipoUsuario {
         Aluno,
-        Professor
+        Professor;
+
+        @JsonValue
+        public String toValue() {
+            return this.name();
+        }
     }
 }
