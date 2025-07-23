@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -30,7 +32,14 @@ public class Usuarios {
     @Column(nullable = false, length = 100) // Definindo como NOT NULL
     private String senha;
 
+    // Relacionamentos
+
+    // Tipo Usuario
     @ManyToOne
     @JoinColumn(name = "id_tipo_usuario", nullable = false)
     private TiposUsuarios tiposUsuario;
+
+    // Emprestimos
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Emprestimos> emprestimos; // Mapeado pelo atributo 'usuario' na classe Emprestimos
 }
