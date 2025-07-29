@@ -47,4 +47,8 @@ public class Ferramentas {
     // Emprestimos
     @OneToMany(mappedBy = "ferramenta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Emprestimos> emprestimos;
+
+    // Construtor pro DTO de Ferramentas
+    public Ferramentas(Long id, String nome, String marca, String modelo, int quantidade, boolean disponibilidade, String descricao, EstadosFerramentas estado, LocaisFerramentas local) {
+    }
 }
