@@ -23,13 +23,13 @@ public class Usuarios {
     @Column(nullable = false, length = 150) // Definindo como NOT NULL
     private String sobrenome;
 
-    @Column(nullable = true, length = 50)
+    @Column(nullable = true, length = 50) // Definido como CAN NULL
     private String turma;
 
-    @Column(unique = true, nullable = false, length = 100) // Definindo como NOT NULL e Único
+    @Column(unique = true, nullable = true, length = 100) // Definindo como CAN NULL e Único
     private String username;
 
-    @Column(nullable = false, length = 100) // Definindo como NOT NULL
+    @Column(nullable = true, length = 100) // Definindo como CAN NULL
     private String senha;
 
     // Relacionamentos

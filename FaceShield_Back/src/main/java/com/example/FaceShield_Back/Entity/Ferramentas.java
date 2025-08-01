@@ -26,6 +26,9 @@ public class Ferramentas {
     @Column(nullable = false, length = 100) // Definindo como NOT NULL
     private String modelo;
 
+    @Column(nullable = false, length = 200) // Definindo como NOT NULL
+    private String qrcode;
+
     @Column(nullable = false) // Definindo como NOT NULL
     private int quantidade;
 
@@ -49,6 +52,6 @@ public class Ferramentas {
     private Set<Emprestimos> emprestimos;
 
     // Construtor pro DTO de Ferramentas
-    public Ferramentas(Long id, String nome, String marca, String modelo, int quantidade, boolean disponibilidade, String descricao, EstadosFerramentas estado, LocaisFerramentas local) {
+    public Ferramentas(Long id, String nome, String marca, String modelo, String qrcode, int quantidade, boolean disponibilidade, String descricao, EstadosFerramentas estado, LocaisFerramentas local) {
     }
 }
