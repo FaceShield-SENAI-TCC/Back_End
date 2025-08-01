@@ -17,6 +17,7 @@ public class FerramentasDTO {
     private String nome;
     private String marca;
     private String modelo;
+    private String qrcode;
     private int quantidade;
     private boolean disponibilidade;
     private String descricao;
@@ -38,6 +39,7 @@ public class FerramentasDTO {
                 this.nome,
                 this.marca,
                 this.modelo,
+                this.qrcode,
                 this.quantidade,
                 this.disponibilidade,
                 this.descricao,
@@ -53,6 +55,7 @@ public class FerramentasDTO {
                 entidade.getNome(),
                 entidade.getMarca(),
                 entidade.getModelo(),
+                entidade.getQrcode(),
                 entidade.getQuantidade(),
                 entidade.isDisponibilidade(),
                 entidade.getDescricao(),

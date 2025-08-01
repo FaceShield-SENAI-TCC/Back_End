@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -21,16 +23,23 @@ public class Usuarios {
     @Column(nullable = false, length = 150) // Definindo como NOT NULL
     private String sobrenome;
 
-    @Column(nullable = true, length = 50)
+    @Column(nullable = true, length = 50) // Definido como CAN NULL
     private String turma;
 
-    @Column(unique = true, nullable = false, length = 100) // Definindo como NOT NULL e Único
+    @Column(unique = true, nullable = true, length = 100) // Definindo como CAN NULL e Único
     private String username;
 
-    @Column(nullable = false, length = 100) // Definindo como NOT NULL
+    @Column(nullable = true, length = 100) // Definindo como CAN NULL
     private String senha;
 
+    // Relacionamentos
+
+    // Tipo Usuario
     @ManyToOne
     @JoinColumn(name = "id_tipo_usuario", nullable = false)
     private TiposUsuarios tiposUsuario;
+
+    // Emprestimos
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Emprestimos> emprestimos; // Mapeado pelo atributo 'usuario' na classe Emprestimos
 }

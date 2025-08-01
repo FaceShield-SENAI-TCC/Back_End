@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -24,6 +26,9 @@ public class Ferramentas {
     @Column(nullable = false, length = 100) // Definindo como NOT NULL
     private String modelo;
 
+    @Column(nullable = false, length = 200) // Definindo como NOT NULL
+    private String qrcode;
+
     @Column(nullable = false) // Definindo como NOT NULL
     private int quantidade;
 
@@ -33,7 +38,7 @@ public class Ferramentas {
     @Column(length = 255)
     private String descricao;
 
-    // Relacionamentos
+    // Relacionamentos Local e Estado de Ferramentas
     @ManyToOne
     @JoinColumn(name = "id_estado", nullable = false)
     private EstadosFerramentas estado;
@@ -41,4 +46,12 @@ public class Ferramentas {
     @ManyToOne
     @JoinColumn(name = "id_local", nullable = false)
     private LocaisFerramentas local;
+
+    // Emprestimos
+    @OneToMany(mappedBy = "ferramenta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Emprestimos> emprestimos;
+
+    // Construtor pro DTO de Ferramentas
+    public Ferramentas(Long id, String nome, String marca, String modelo, String qrcode, int quantidade, boolean disponibilidade, String descricao, EstadosFerramentas estado, LocaisFerramentas local) {
+    }
 }
