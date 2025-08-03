@@ -26,7 +26,8 @@ public class UsuariosController {
     @GetMapping("/buscar")
     public ResponseEntity<List<Usuarios>> getAllUsuarios(
             @RequestParam(required = false) String nome,
-            @RequestParam(required = false) String turma) {
+            @RequestParam(required = false) String turma,
+            @RequestParam(required = false) String tipo_usuario) {
 
         if (nome != null && !nome.isEmpty()) {
             List<Usuarios> usuariosPorNome = usuariosServ.getAllByNome(nome);
@@ -36,6 +37,11 @@ public class UsuariosController {
         if (turma != null && !turma.isEmpty()) {
             List<Usuarios> usuariosPorTurma = usuariosServ.getAllByTurma(turma);
             return ResponseEntity.ok(usuariosPorTurma);
+        }
+
+        if (tipo_usuario != null && !tipo_usuario.isEmpty()) {
+            List<Usuarios> usuariosPorTipo = usuariosServ.getAllByTiposUsuarios(tipo_usuario);
+            return ResponseEntity.ok(usuariosPorTipo);
         }
 
         List<Usuarios> todosUsuarios = usuariosServ.getAllUsuarios();
