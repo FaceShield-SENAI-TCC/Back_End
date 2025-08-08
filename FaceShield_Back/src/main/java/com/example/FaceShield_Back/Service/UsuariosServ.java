@@ -1,6 +1,5 @@
 package com.example.FaceShield_Back.Service;
 
-import com.example.FaceShield_Back.DTO.TiposUsuariosDTO;
 import com.example.FaceShield_Back.DTO.UsuariosDTO;
 import com.example.FaceShield_Back.Entity.Usuarios;
 import com.example.FaceShield_Back.Repository.UsuariosRepo;
@@ -42,6 +41,11 @@ public class UsuariosServ {
         return repository.findAllByTurma(turma);
     }
 
+    // Buscar por TIPO DE USUARIO (retorna entidades)
+    public List<Usuarios> getAllByTiposUsuarios(String tipo_usuario) {
+        return repository.findAllByTipoUsuario(tipo_usuario);
+    }
+
     // Criar novo usuário (recebe DTO, retorna DTO)
     public UsuariosDTO createUsuario(UsuariosDTO usuariosDTO) {
         Usuarios usuario = UsuariosDTO.toEntity(usuariosDTO);
@@ -61,7 +65,7 @@ public class UsuariosServ {
             usuario.setTurma(dto.getTurma());
             usuario.setUsername(dto.getUsername());
             usuario.setSenha(dto.getSenha());
-            usuario.setTiposUsuario(TiposUsuariosDTO.toEntity(dto.getTiposUsuario()));
+            usuario.setTipoUsuario(dto.getTipoUsuario());
 
             usuario = repository.save(usuario);
 

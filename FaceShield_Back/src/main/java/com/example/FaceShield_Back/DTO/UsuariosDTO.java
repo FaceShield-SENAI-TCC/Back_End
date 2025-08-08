@@ -16,8 +16,7 @@ public class UsuariosDTO {
     private String turma;
     private String username;
     private String senha;
-
-    private TiposUsuariosDTO tiposUsuario;
+    private String tipoUsuario;
 
     // Conversão de Entidade para DTO
     public static UsuariosDTO toDTO(Usuarios entidade) {
@@ -28,7 +27,7 @@ public class UsuariosDTO {
                 entidade.getTurma(),
                 entidade.getUsername(),
                 entidade.getSenha(),
-                TiposUsuariosDTO.toDTO(entidade.getTiposUsuario())
+                entidade.getTipoUsuario()
         );
     }
 
@@ -42,7 +41,7 @@ public class UsuariosDTO {
         entidade.setTurma(dto.getTurma());
         entidade.setUsername(dto.getUsername());
         entidade.setSenha(dto.getSenha());
-        entidade.setTiposUsuario(TiposUsuariosDTO.toEntity(dto.getTiposUsuario()));
+        entidade.setTipoUsuario(dto.getTipoUsuario());
 
         return entidade;
     }
