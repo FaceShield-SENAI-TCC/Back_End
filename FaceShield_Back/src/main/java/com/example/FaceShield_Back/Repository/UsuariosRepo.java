@@ -1,6 +1,5 @@
 package com.example.FaceShield_Back.Repository;
 
-import com.example.FaceShield_Back.Entity.TiposUsuarios;
 import com.example.FaceShield_Back.Entity.Usuarios;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,6 +12,6 @@ public interface UsuariosRepo extends JpaRepository<Usuarios, Long> {
     // Metodo para buscar por turma
     List<Usuarios> findAllByTurma(String turma);
 
-    // Buscar por tipo de usuário (Aluno ou Professor)
-    List<Usuarios> findAllByTiposUsuario_TipoUsuario(TiposUsuarios.TipoUsuario tipoUsuario);
+    // Buscar por tipo de usuário
+    List<Usuarios> findAllByTipoUsuario(String tipoUsuario);
 }

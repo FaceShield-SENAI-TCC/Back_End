@@ -32,12 +32,8 @@ public class Usuarios {
     @Column(nullable = true, length = 100) // Definindo como CAN NULL
     private String senha;
 
-    // Relacionamentos
-
-    // Tipo Usuario
-    @ManyToOne
-    @JoinColumn(name = "id_tipo_usuario", nullable = false)
-    private TiposUsuarios tiposUsuario;
+    @Column(name = "tipo_usuario", nullable = false) // Definindo como NOT NULL
+    private String tipoUsuario;
 
     // Emprestimos
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
