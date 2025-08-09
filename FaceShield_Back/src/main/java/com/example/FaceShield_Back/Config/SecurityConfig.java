@@ -1,6 +1,7 @@
 package com.example.FaceShield_Back.Config;
 
 import com.example.FaceShield_Back.Service.Security.CustomUserDetailsService;
+import com.example.FaceShield_Back.Service.Security.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
