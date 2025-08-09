@@ -45,6 +45,9 @@ public class AuthController {
             newUser.setSenha(passwordEncoder.encode(body.senha()));
             newUser.setUsername(body.username());
             newUser.setNome(body.nome());
+            newUser.setSobrenome(body.sobrenome());
+            newUser.setTurma(body.turma());
+            newUser.setTipoUsuario("PROFESSOR");
 
             this.repository.save(newUser);
 
