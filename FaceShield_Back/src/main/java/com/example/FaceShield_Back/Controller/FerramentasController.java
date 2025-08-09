@@ -27,8 +27,7 @@ public class FerramentasController {
     public ResponseEntity<List<Ferramentas>> getAllFerramentas(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) Boolean disponivel,
-            @RequestParam(required = false) Long idLocal,
-            @RequestParam(required = false) Long idEstado) {
+            @RequestParam(required = false) Long idLocal) {
 
         // Filtro por nome
         if (nome != null && !nome.isEmpty()) {
@@ -45,12 +44,6 @@ public class FerramentasController {
         // Filtro por local
         if (idLocal != null) {
             List<Ferramentas> ferramentas = ferramentasServ.getFerramentasByLocal(idLocal);
-            return ResponseEntity.ok(ferramentas);
-        }
-
-        // Filtro por estado
-        if (idEstado != null) {
-            List<Ferramentas> ferramentas = ferramentasServ.getFerramentasByEstado(idEstado);
             return ResponseEntity.ok(ferramentas);
         }
 

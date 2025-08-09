@@ -55,11 +55,6 @@ public class FerramentasServ {
         return repository.findByLocalId(idLocal);
     }
 
-    // Buscar ferramentas por estado
-    public List<Ferramentas> getFerramentasByEstado(Long idEstado) {
-        return repository.findByEstadoId(idEstado);
-    }
-
     // Atualizando Ferramenta
     public Optional<FerramentasDTO> updateFerramenta(Long idFerramenta, FerramentasDTO dto) {
         Optional<Ferramentas> optional = repository.findById(idFerramenta);
@@ -70,10 +65,9 @@ public class FerramentasServ {
             ferramenta.setNome(dto.getNome());
             ferramenta.setMarca(dto.getMarca());
             ferramenta.setModelo(dto.getModelo());
-            ferramenta.setQuantidade(dto.getQuantidade());
+            ferramenta.setEstado(dto.getEstado());
             ferramenta.setDisponibilidade(dto.isDisponibilidade());
             ferramenta.setDescricao(dto.getDescricao());
-            ferramenta.setEstado(dto.toFerramentas().getEstado());
             ferramenta.setLocal(dto.toFerramentas().getLocal());
 
             ferramenta = repository.save(ferramenta);

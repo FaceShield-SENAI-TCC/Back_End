@@ -1,6 +1,5 @@
 package com.example.FaceShield_Back.DTO;
 
-import com.example.FaceShield_Back.Entity.EstadosFerramentas;
 import com.example.FaceShield_Back.Entity.Ferramentas;
 import com.example.FaceShield_Back.Entity.LocaisFerramentas;
 import lombok.AllArgsConstructor;
@@ -18,19 +17,15 @@ public class FerramentasDTO {
     private String marca;
     private String modelo;
     private String qrcode;
-    private int quantidade;
+    private String estado;
     private boolean disponibilidade;
     private String descricao;
 
     // Somente os IDs dos relacionamentos
-    private Long id_estado;
     private Long id_local;
 
     // Conversão para entidade
     public Ferramentas toFerramentas() {
-        EstadosFerramentas estado = new EstadosFerramentas();
-        estado.setId(this.id_estado);
-
         LocaisFerramentas local = new LocaisFerramentas();
         local.setId(this.id_local);
 
@@ -40,11 +35,11 @@ public class FerramentasDTO {
                 this.marca,
                 this.modelo,
                 this.qrcode,
-                this.quantidade,
+                this.estado,
                 this.disponibilidade,
                 this.descricao,
-                estado,
-                local
+                local,
+                null // Nulo os emprestimos
         );
     }
 
@@ -56,10 +51,9 @@ public class FerramentasDTO {
                 entidade.getMarca(),
                 entidade.getModelo(),
                 entidade.getQrcode(),
-                entidade.getQuantidade(),
+                entidade.getEstado(),
                 entidade.isDisponibilidade(),
                 entidade.getDescricao(),
-                entidade.getEstado() != null ? entidade.getEstado().getId() : null,
                 entidade.getLocal() != null ? entidade.getLocal().getId() : null
         );
     }

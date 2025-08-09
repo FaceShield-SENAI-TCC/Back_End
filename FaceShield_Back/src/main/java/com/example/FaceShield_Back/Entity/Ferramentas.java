@@ -1,3 +1,4 @@
+
 package com.example.FaceShield_Back.Entity;
 
 import jakarta.persistence.*;
@@ -26,23 +27,19 @@ public class Ferramentas {
     @Column(nullable = false, length = 100) // Definindo como NOT NULL
     private String modelo;
 
-    @Column(nullable = false, length = 200) // Definindo como NOT NULL
+    @Column(nullable = true, length = 200) // Definindo como NOT NULL (Por enquanto para teste está Can Null)
     private String qrcode;
 
-    @Column(nullable = false) // Definindo como NOT NULL
-    private int quantidade;
+    @Column(nullable = false, length = 200) // Definindo como NOT NULL
+    private String estado;
 
     @Column(nullable = false) // Definindo como NOT NULL
-    private boolean disponibilidade;
+    private boolean disponibilidade; // Disponivel (1), Indisponivel (0)
 
-    @Column(length = 255)
+    @Column(length = 200)
     private String descricao;
 
-    // Relacionamentos Local e Estado de Ferramentas
-    @ManyToOne
-    @JoinColumn(name = "id_estado", nullable = false)
-    private EstadosFerramentas estado;
-
+    // Relacionamentos Local de Ferramentas
     @ManyToOne
     @JoinColumn(name = "id_local", nullable = false)
     private LocaisFerramentas local;
@@ -52,6 +49,6 @@ public class Ferramentas {
     private Set<Emprestimos> emprestimos;
 
     // Construtor pro DTO de Ferramentas
-    public Ferramentas(Long id, String nome, String marca, String modelo, String qrcode, int quantidade, boolean disponibilidade, String descricao, EstadosFerramentas estado, LocaisFerramentas local) {
-    }
+//    public Ferramentas(Long id, String nome, String marca, String modelo, String qrcode, String estado, boolean disponibilidade, String descricao, LocaisFerramentas local) {
+//    }
 }
