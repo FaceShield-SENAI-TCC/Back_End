@@ -14,7 +14,4 @@ public interface FerramentasRepo extends JpaRepository<Ferramentas, Long> {
 
     // Buscar ferramentas por local
     List<Ferramentas> findByLocalId(Long idLocal);
-
-    // Buscar ferramentas por estado
-    List<Ferramentas> findByEstadoId(Long idEstado);
 }
