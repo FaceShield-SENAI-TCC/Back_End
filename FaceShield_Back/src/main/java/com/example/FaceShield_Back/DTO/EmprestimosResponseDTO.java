@@ -21,14 +21,17 @@ public class EmprestimosResponseDTO {
 
     // Método de conversão
     public static EmprestimosResponseDTO toDTO(Emprestimos emprestimos) {
+        String nomeCompleto = emprestimos.getUsuario().getNome() + " " +
+                emprestimos.getUsuario().getSobrenome();
+
         return new EmprestimosResponseDTO(
                 emprestimos.getId(),
                 emprestimos.getData_retirada(),
                 emprestimos.getData_devolucao(),
                 emprestimos.getObservacoes(),
+                nomeCompleto, // Nome completo do usuário
 
-                // Obtém o nome de usuario e ferramenta
-                emprestimos.getUsuario().getNome(),
+                // Obtém o nome de ferramenta
                 emprestimos.getFerramenta().getNome()
         );
     }
