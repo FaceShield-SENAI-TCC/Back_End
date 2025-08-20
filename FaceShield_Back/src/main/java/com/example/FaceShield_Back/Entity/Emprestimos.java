@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -18,9 +18,9 @@ public class Emprestimos {
     private Long id;
 
     @Column(nullable = false) // Definindo como NOT NULL
-    private Date data_retirada;
+    private LocalDateTime data_retirada;
 
-    private Date data_devolucao;
+    private LocalDateTime data_devolucao;
 
     @Column(length = 150)
     private String observacoes;

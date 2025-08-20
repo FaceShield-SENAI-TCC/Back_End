@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -13,8 +13,8 @@ import java.util.Date;
 public class EmprestimosDTO {
 
     private Long id;
-    private Date data_retirada;
-    private Date data_devolucao;
+    private LocalDateTime data_retirada;
+    private LocalDateTime data_devolucao;
     private String observacoes;
 
     // Usando DTOs em vez das entidades diretamente
