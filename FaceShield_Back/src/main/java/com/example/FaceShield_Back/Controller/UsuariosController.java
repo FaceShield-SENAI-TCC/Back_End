@@ -1,6 +1,7 @@
 package com.example.FaceShield_Back.Controller;
 
 import com.example.FaceShield_Back.DTO.UsuariosDTO;
+import com.example.FaceShield_Back.DTO.UsuariosResponseDTO;
 import com.example.FaceShield_Back.Entity.Usuarios;
 import com.example.FaceShield_Back.Service.UsuariosServ;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,53 +25,49 @@ public class UsuariosController {
 
     // Buscar usuários com filtros opcionais
     @GetMapping("/buscar")
-    public ResponseEntity<List<Usuarios>> getAllUsuarios(
+    public ResponseEntity<List<UsuariosResponseDTO>> getAllUsuarios(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String turma,
             @RequestParam(required = false) String tipo_usuario) {
 
         if (nome != null && !nome.isEmpty()) {
-            List<Usuarios> usuariosPorNome = usuariosServ.getAllByNome(nome);
-            return ResponseEntity.ok(usuariosPorNome);
+            return ResponseEntity.ok(usuariosServ.getAllByNome(nome));
         }
 
         if (turma != null && !turma.isEmpty()) {
-            List<Usuarios> usuariosPorTurma = usuariosServ.getAllByTurma(turma);
-            return ResponseEntity.ok(usuariosPorTurma);
+            return ResponseEntity.ok(usuariosServ.getAllByTurma(turma));
         }
 
         if (tipo_usuario != null && !tipo_usuario.isEmpty()) {
-            List<Usuarios> usuariosPorTipo = usuariosServ.getAllByTiposUsuarios(tipo_usuario);
-            return ResponseEntity.ok(usuariosPorTipo);
+            return ResponseEntity.ok(usuariosServ.getAllByTiposUsuarios(tipo_usuario));
         }
 
-        List<Usuarios> todosUsuarios = usuariosServ.getAllUsuarios();
-        return ResponseEntity.ok(todosUsuarios);
+        return ResponseEntity.ok(usuariosServ.getAllUsuarios());
     }
 
     // Buscar usuário por ID
     @GetMapping("/buscar/{id}")
-    public ResponseEntity<UsuariosDTO> getUsuarioById(@PathVariable Long id) {
-        Optional<UsuariosDTO> usuario = usuariosServ.getByID(id);
-        return usuario.map(ResponseEntity::ok)
+    public ResponseEntity<UsuariosResponseDTO> getUsuarioById(@PathVariable Long id) {
+        return usuariosServ.getByID(id)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // Criar novo usuário
     @PostMapping("/novoUsuario")
-    public ResponseEntity<UsuariosDTO> createUsuario(@RequestBody UsuariosDTO usuariosDTO) {
-        UsuariosDTO novoUsuario = usuariosServ.createUsuario(usuariosDTO);
+    public ResponseEntity<UsuariosResponseDTO> createUsuario(@RequestBody UsuariosDTO usuariosDTO) {
+        UsuariosResponseDTO novoUsuario = usuariosServ.createUsuario(usuariosDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
     }
 
     // Atualizar usuário existente
     @PutMapping("/editar/{idUsuario}")
-    public ResponseEntity<UsuariosDTO> updateUsuario(
+    public ResponseEntity<UsuariosResponseDTO> updateUsuario(
             @PathVariable Long idUsuario,
             @RequestBody UsuariosDTO usuariosDTO) {
 
-        Optional<UsuariosDTO> usuarioAtualizado = usuariosServ.updateUsuario(idUsuario, usuariosDTO);
-        return usuarioAtualizado.map(ResponseEntity::ok)
+        return usuariosServ.updateUsuario(idUsuario, usuariosDTO)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -80,9 +77,8 @@ public class UsuariosController {
         boolean deletado = usuariosServ.deleteUsuario(id);
         if (deletado) {
             return ResponseEntity.ok("Usuário removido com sucesso.");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Erro ao remover usuário. Usuário não encontrado ou já removido.");
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Erro ao remover usuário. Usuário não encontrado ou já removido.");
     }
 }
