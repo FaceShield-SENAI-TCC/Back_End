@@ -1,7 +1,7 @@
 package com.example.FaceShield_Back.Controller;
 
 import com.example.FaceShield_Back.DTO.FerramentasDTO;
-import com.example.FaceShield_Back.DTO.FerramentasResponseDTO;
+import com.example.FaceShield_Back.DTO.responses.FerramentasResponseDTO;
 import com.example.FaceShield_Back.Service.FerramentasServ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

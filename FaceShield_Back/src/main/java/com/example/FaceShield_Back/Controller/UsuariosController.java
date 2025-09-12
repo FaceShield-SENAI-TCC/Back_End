@@ -1,8 +1,7 @@
 package com.example.FaceShield_Back.Controller;
 
 import com.example.FaceShield_Back.DTO.UsuariosDTO;
-import com.example.FaceShield_Back.DTO.UsuariosResponseDTO;
-import com.example.FaceShield_Back.Entity.Usuarios;
+import com.example.FaceShield_Back.DTO.responses.UsuariosResponseDTO;
 import com.example.FaceShield_Back.Service.UsuariosServ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/usuarios")
