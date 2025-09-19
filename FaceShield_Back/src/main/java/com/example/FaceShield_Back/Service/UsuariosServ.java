@@ -1,7 +1,7 @@
 package com.example.FaceShield_Back.Service;
 
 import com.example.FaceShield_Back.DTO.UsuariosDTO;
-import com.example.FaceShield_Back.DTO.UsuariosResponseDTO;
+import com.example.FaceShield_Back.DTO.responses.UsuariosResponseDTO;
 import com.example.FaceShield_Back.Entity.Usuarios;
 import com.example.FaceShield_Back.Repository.UsuariosRepo;
 import org.springframework.beans.factory.annotation.Autowired;
