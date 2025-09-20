@@ -1,4 +1,4 @@
-package com.example.FaceShield_Back.DTO;
+package com.example.FaceShield_Back.DTO.responses;
 
 import com.example.FaceShield_Back.Entity.Emprestimos;
 import lombok.AllArgsConstructor;

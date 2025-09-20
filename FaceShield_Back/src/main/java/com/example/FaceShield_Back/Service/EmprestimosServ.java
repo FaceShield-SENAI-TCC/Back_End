@@ -1,7 +1,7 @@
 package com.example.FaceShield_Back.Service;
 
 import com.example.FaceShield_Back.DTO.EmprestimosDTO;
-import com.example.FaceShield_Back.DTO.EmprestimosResponseDTO;
+import com.example.FaceShield_Back.DTO.responses.EmprestimosResponseDTO;
 import com.example.FaceShield_Back.Entity.Emprestimos;
 import com.example.FaceShield_Back.Repository.EmprestimosRepo;
 import org.springframework.beans.factory.annotation.Autowired;
