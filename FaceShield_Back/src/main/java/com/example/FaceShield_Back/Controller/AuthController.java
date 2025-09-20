@@ -32,7 +32,7 @@ public class AuthController {
 
             return ResponseEntity.ok(new ResponseDTO(user.getNome(), token));
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(401).build();
     }
 
     @PostMapping("/register")
@@ -55,6 +55,6 @@ public class AuthController {
 
             return ResponseEntity.ok(new ResponseDTO(newUser.getNome(), token));
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(409).build();
     }
 }
