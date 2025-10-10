@@ -5,7 +5,6 @@ import com.example.FaceShield_Back.DTO.Security.RegisterRequestDTO;
 import com.example.FaceShield_Back.DTO.Security.ResponseDTO;
 import com.example.FaceShield_Back.Entity.Usuarios;
 import com.example.FaceShield_Back.Repository.UsuariosRepo;
-import com.example.FaceShield_Back.Service.Security.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
