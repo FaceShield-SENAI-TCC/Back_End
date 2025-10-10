@@ -1,12 +1,8 @@
 package com.example.FaceShield_Back.Controller;
 
-import com.example.FaceShield_Back.DTO.Security.LoginRequestDTO;
 import com.example.FaceShield_Back.DTO.Security.RegisterRequestDTO;
-import com.example.FaceShield_Back.DTO.Security.ResponseDTO;
 import com.example.FaceShield_Back.Entity.Usuarios;
 import com.example.FaceShield_Back.Repository.UsuariosRepo;
-import com.example.FaceShield_Back.Service.Security.TokenService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,21 +14,13 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor
 public class AuthController {
     private final UsuariosRepo repository;
     private final PasswordEncoder passwordEncoder;
-    private final TokenService tokenService;
 
-    @PostMapping("/login")
-    public ResponseEntity login (@RequestBody LoginRequestDTO body) {
-        Usuarios user = this.repository.findByUsername(body.username()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        if (passwordEncoder.matches(body.senha(), user.getSenha())) {
-            String token = this.tokenService.generateToken(user);
-
-            return ResponseEntity.ok(new ResponseDTO(user.getNome(), token));
-        }
-        return ResponseEntity.status(401).build();
+    public AuthController(UsuariosRepo repository, PasswordEncoder passwordEncoder) {
+        this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/register")
@@ -51,9 +39,7 @@ public class AuthController {
 
             this.repository.save(newUser);
 
-            String token = this.tokenService.generateToken(newUser);
-
-            return ResponseEntity.ok(new ResponseDTO(newUser.getNome(), token));
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(409).build();
     }
