@@ -1,6 +1,7 @@
 package com.example.FaceShield_Back.Service;
 
 import com.example.FaceShield_Back.DTO.UsuariosDTO;
+import com.example.FaceShield_Back.DTO.responses.UsuariosResponseDTO;
 import com.example.FaceShield_Back.Entity.Usuarios;
 import com.example.FaceShield_Back.Repository.UsuariosRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuariosServ {
@@ -15,64 +17,61 @@ public class UsuariosServ {
     @Autowired
     private UsuariosRepo repository;
 
-    // Buscar todos os usuários (retorna entidades)
-    public List<Usuarios> getAllUsuarios() {
-        return repository.findAll();
+    // Buscar todos os usuários (agora retorna List<UsuariosResponseDTO>)
+    public List<UsuariosResponseDTO> getAllUsuarios() {
+        return repository.findAll().stream()
+                .map(UsuariosResponseDTO::toDTO)
+                .collect(Collectors.toList());
     }
 
-    // Buscar por ID (retorna Optional<DTO>)
-    public Optional<UsuariosDTO> getByID(Long id) {
-        Optional<Usuarios> optional = repository.findById(id);
-
-        if (optional.isPresent()) {
-            return Optional.of(UsuariosDTO.toDTO(optional.get()));
-        } else {
-            return Optional.empty();
-        }
+    // Buscar por ID (agora retorna Optional<UsuariosResponseDTO>)
+    public Optional<UsuariosResponseDTO> getByID(Long id) {
+        return repository.findById(id)
+                .map(UsuariosResponseDTO::toDTO);
     }
 
-    // Buscar pelo NOME do usuário (retorna entidades)
-    public List<Usuarios> getAllByNome(String nome) {
-        return repository.findAllByNome(nome);
+    // Buscar pelo NOME do usuário (agora retorna List<UsuariosResponseDTO>)
+    public List<UsuariosResponseDTO> getAllByNome(String nome) {
+        return repository.findAllByNome(nome).stream()
+                .map(UsuariosResponseDTO::toDTO)
+                .collect(Collectors.toList());
     }
 
-    // Buscar por TURMA (retorna entidades)
-    public List<Usuarios> getAllByTurma(String turma) {
-        return repository.findAllByTurma(turma);
+    // Buscar por TURMA (agora retorna List<UsuariosResponseDTO>)
+    public List<UsuariosResponseDTO> getAllByTurma(String turma) {
+        return repository.findAllByTurma(turma).stream()
+                .map(UsuariosResponseDTO::toDTO)
+                .collect(Collectors.toList());
     }
 
-    // Buscar por TIPO DE USUARIO (retorna entidades)
-    public List<Usuarios> getAllByTiposUsuarios(String tipo_usuario) {
-        return repository.findAllByTipoUsuario(tipo_usuario);
+    // Buscar por TIPO DE USUARIO (agora retorna List<UsuariosResponseDTO>)
+    public List<UsuariosResponseDTO> getAllByTiposUsuarios(String tipo_usuario) {
+        return repository.findAllByTipoUsuario(tipo_usuario).stream()
+                .map(UsuariosResponseDTO::toDTO)
+                .collect(Collectors.toList());
     }
 
-    // Criar novo usuário (recebe DTO, retorna DTO)
-    public UsuariosDTO createUsuario(UsuariosDTO usuariosDTO) {
+    // Criar novo usuário (mantém UsuariosDTO para input)
+    public UsuariosResponseDTO createUsuario(UsuariosDTO usuariosDTO) {
         Usuarios usuario = UsuariosDTO.toEntity(usuariosDTO);
         usuario = repository.save(usuario);
-        return UsuariosDTO.toDTO(usuario);
+        return UsuariosResponseDTO.toDTO(usuario);
     }
 
-    // Atualizar usuário existente
-    public Optional<UsuariosDTO> updateUsuario(Long idUsuario, UsuariosDTO dto) {
-        Optional<Usuarios> optional = repository.findById(idUsuario);
+    // Atualizar usuário existente (mantém UsuariosDTO para input)
+    public Optional<UsuariosResponseDTO> updateUsuario(Long idUsuario, UsuariosDTO dto) {
+        return repository.findById(idUsuario)
+                .map(usuario -> {
+                    usuario.setNome(dto.getNome());
+                    usuario.setSobrenome(dto.getSobrenome());
+                    usuario.setTurma(dto.getTurma());
+                    usuario.setUsername(dto.getUsername());
+                    usuario.setSenha(dto.getSenha());
+                    usuario.setTipoUsuario(dto.getTipoUsuario());
 
-        if (optional.isPresent()) {
-            Usuarios usuario = optional.get();
-
-            usuario.setNome(dto.getNome());
-            usuario.setSobrenome(dto.getSobrenome());
-            usuario.setTurma(dto.getTurma());
-            usuario.setUsername(dto.getUsername());
-            usuario.setSenha(dto.getSenha());
-            usuario.setTipoUsuario(dto.getTipoUsuario());
-
-            usuario = repository.save(usuario);
-
-            return Optional.of(UsuariosDTO.toDTO(usuario));
-        } else {
-            return Optional.empty();
-        }
+                    Usuarios updated = repository.save(usuario);
+                    return UsuariosResponseDTO.toDTO(updated);
+                });
     }
 
     // Remover usuário (retorna booleano indicando sucesso)
@@ -80,8 +79,7 @@ public class UsuariosServ {
         if (repository.existsById(id)) {
             repository.deleteById(id);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 }

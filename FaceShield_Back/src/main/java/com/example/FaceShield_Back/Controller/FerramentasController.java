@@ -1,7 +1,7 @@
 package com.example.FaceShield_Back.Controller;
 
 import com.example.FaceShield_Back.DTO.FerramentasDTO;
-import com.example.FaceShield_Back.Entity.Ferramentas;
+import com.example.FaceShield_Back.DTO.responses.FerramentasResponseDTO;
 import com.example.FaceShield_Back.Service.FerramentasServ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/ferramentas")
@@ -24,57 +23,53 @@ public class FerramentasController {
 
     // Buscar todas as ferramentas com filtros opcionais
     @GetMapping("/buscar")
-    public ResponseEntity<List<Ferramentas>> getAllFerramentas(
+    public ResponseEntity<List<FerramentasResponseDTO>> getAllFerramentas(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) Boolean disponivel,
             @RequestParam(required = false) Long idLocal) {
 
         // Filtro por nome
         if (nome != null && !nome.isEmpty()) {
-            List<Ferramentas> ferramentas = ferramentasServ.getAllByNome(nome);
-            return ResponseEntity.ok(ferramentas);
+            return ResponseEntity.ok(ferramentasServ.getAllByNome(nome));
         }
 
         // Filtro por disponibilidade
         if (disponivel != null && disponivel) {
-            List<Ferramentas> ferramentas = ferramentasServ.getFerramentasDisponiveis();
-            return ResponseEntity.ok(ferramentas);
+            return ResponseEntity.ok(ferramentasServ.getFerramentasDisponiveis());
         }
 
         // Filtro por local
         if (idLocal != null) {
-            List<Ferramentas> ferramentas = ferramentasServ.getFerramentasByLocal(idLocal);
-            return ResponseEntity.ok(ferramentas);
+            return ResponseEntity.ok(ferramentasServ.getFerramentasByLocal(idLocal));
         }
 
         // Caso nenhum filtro seja especificado, retorna todas
-        List<Ferramentas> todasFerramentas = ferramentasServ.getAllFerramentas();
-        return ResponseEntity.ok(todasFerramentas);
+        return ResponseEntity.ok(ferramentasServ.getAllFerramentas());
     }
 
     // Buscar ferramenta por ID
     @GetMapping("/buscar/{id}")
-    public ResponseEntity<FerramentasDTO> getFerramentaById(@PathVariable Long id) {
-        Optional<FerramentasDTO> ferramenta = ferramentasServ.getByID(id);
-        return ferramenta.map(ResponseEntity::ok)
+    public ResponseEntity<FerramentasResponseDTO> getFerramentaById(@PathVariable Long id) {
+        return ferramentasServ.getByID(id)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // Criar nova ferramenta
     @PostMapping("/novaFerramenta")
-    public ResponseEntity<FerramentasDTO> createFerramenta(@RequestBody FerramentasDTO ferramentasDTO) {
-        FerramentasDTO novaFerramenta = ferramentasServ.createFerramenta(ferramentasDTO);
+    public ResponseEntity<FerramentasResponseDTO> createFerramenta(@RequestBody FerramentasDTO ferramentasDTO) {
+        FerramentasResponseDTO novaFerramenta = ferramentasServ.createFerramenta(ferramentasDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaFerramenta);
     }
 
     // Atualizar ferramenta existente
     @PutMapping("/editar/{idFerramenta}")
-    public ResponseEntity<FerramentasDTO> updateFerramenta(
+    public ResponseEntity<FerramentasResponseDTO> updateFerramenta(
             @PathVariable Long idFerramenta,
             @RequestBody FerramentasDTO ferramentasDTO) {
 
-        Optional<FerramentasDTO> ferramentaAtualizada = ferramentasServ.updateFerramenta(idFerramenta, ferramentasDTO);
-        return ferramentaAtualizada.map(ResponseEntity::ok)
+        return ferramentasServ.updateFerramenta(idFerramenta, ferramentasDTO)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -84,9 +79,8 @@ public class FerramentasController {
         boolean deletado = ferramentasServ.deleteFerramenta(id);
         if (deletado) {
             return ResponseEntity.ok("Ferramenta removida com sucesso.");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Erro ao remover ferramenta. Ferramenta não encontrada ou já removida.");
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Erro ao remover ferramenta. Ferramenta não encontrada ou já removida.");
     }
 }
