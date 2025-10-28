@@ -78,17 +78,28 @@ public class AuthController {
         newUser.setUsername(body.username());
         newUser.setNome(body.nome());
         newUser.setSobrenome(body.sobrenome());
-        newUser.setTurma(body.turma());
-        newUser.setTipoUsuario(body.tipoUsuario()); // Usamos o tipo vindo do JSON
+        newUser.setTipoUsuario(body.tipoUsuario());
 
-        // 2. Verifica o Tipo de Usuário para decidir a lógica de senha
+        // 2. Lógica para TURMA: Obrigatória para ALUNO, SEMPRE NULL para PROFESSOR
+        if ("ALUNO".equalsIgnoreCase(body.tipoUsuario())) {
+            // Para ALUNO: turma é obrigatória
+            if (body.turma() == null || body.turma().isEmpty()) {
+                return ResponseEntity.badRequest().body("Turma é obrigatória para ALUNO.");
+            }
+            newUser.setTurma(body.turma());
+        } else if ("PROFESSOR".equalsIgnoreCase(body.tipoUsuario())) {
+            // Para PROFESSOR: turma é SEMPRE null (ignora qualquer valor enviado)
+            newUser.setTurma(null);
+        }
+
+        // 3. Verifica o Tipo de Usuário para decidir a lógica de senha
         if ("PROFESSOR".equalsIgnoreCase(body.tipoUsuario())) {
 
             // LÓGICA PARA PROFESSOR: Senha é obrigatória
             if (body.senha() == null || body.senha().isEmpty()) {
                 return ResponseEntity.badRequest().body("Senha é obrigatória para PROFESSOR.");
             }
-            newUser.setSenha(passwordEncoder.encode(body.senha())); // Criptografa a senha
+            newUser.setSenha(passwordEncoder.encode(body.senha()));
 
         } else if ("ALUNO".equalsIgnoreCase(body.tipoUsuario())) {
 
@@ -99,11 +110,11 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Tipo de usuário inválido (use ALUNO ou PROFESSOR).");
         }
 
-        // 3. Salva o novo usuário no banco
+        // 4. Salva o novo usuário no banco
         this.repository.save(newUser);
 
-        // 4. Gera um token para o novo usuário já sair logado
+        // 5. Gera um token para o novo usuário já sair logado
         String token = this.tokenService.generateToken(newUser);
-        return ResponseEntity.ok(new ResponseDTO(newUser.getNome(), token));
+        return ResponseEntity.ok(new ResponseDTO(newUser.getUsername(), token));
     }
 }
