@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -63,58 +60,65 @@ public class AuthController {
     }
 
     /**
-     * Endpoint de REGISTRO
-     * Agora diferencia o registro de ALUNO (senha nula) e PROFESSOR (senha obrigatória).
+     * Endpoint de REGISTRO (agora ATUALIZAÇÃO por ID)
+     * Completa o cadastro de um usuário pré-criado pelo Python,
+     * adicionando username e senha.
      */
-    @PostMapping("/register")
-    public ResponseEntity register(@RequestBody RegisterRequestDTO body) {
-        // 1. Verifica se o username já existe
-        Optional<Usuarios> user = this.repository.findByUsername(body.username());
-        if (user.isPresent()) {
-            return ResponseEntity.badRequest().body("Username já cadastrado.");
+    @PutMapping("/register/{id}")
+    public ResponseEntity register(@PathVariable Long id, @RequestBody RegisterRequestDTO body) {
+
+        // --- LÓGICA DE ATUALIZAÇÃO POR ID ---
+
+        // 1. Encontra o usuário EXISTENTE pelo ID
+        Optional<Usuarios> userToUpdateOpt = this.repository.findById(id);
+
+        // 2. Verifica se o usuário foi encontrado
+        if (userToUpdateOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Usuário não encontrado. O cadastro facial (Python) não foi localizado.");
         }
 
-        Usuarios newUser = new Usuarios();
-        newUser.setUsername(body.username());
-        newUser.setNome(body.nome());
-        newUser.setSobrenome(body.sobrenome());
-        newUser.setTipoUsuario(body.tipoUsuario());
+        Usuarios userToUpdate = userToUpdateOpt.get();
 
-        // 2. Lógica para TURMA: Obrigatória para ALUNO, SEMPRE NULL para PROFESSOR
-        if ("ALUNO".equalsIgnoreCase(body.tipoUsuario())) {
-            // Para ALUNO: turma é obrigatória
-            if (body.turma() == null || body.turma().isEmpty()) {
-                return ResponseEntity.badRequest().body("Turma é obrigatória para ALUNO.");
-            }
-            newUser.setTurma(body.turma());
-        } else if ("PROFESSOR".equalsIgnoreCase(body.tipoUsuario())) {
-            // Para PROFESSOR: turma é SEMPRE null (ignora qualquer valor enviado)
-            newUser.setTurma(null);
+        // 3. Verifica se este usuário já não completou seu registro
+        if (userToUpdate.getUsername() != null && !userToUpdate.getUsername().isEmpty()) {
+            return ResponseEntity.badRequest().body("Este usuário já completou seu registro anteriormente.");
         }
 
-        // 3. Verifica o Tipo de Usuário para decidir a lógica de senha
-        if ("PROFESSOR".equalsIgnoreCase(body.tipoUsuario())) {
+        // 4. Verifica se o USERNAME que ele está tentando usar já não foi pego por OUTRA pessoa
+        Optional<Usuarios> existingUserWithThisUsername = this.repository.findByUsername(body.username());
+        if (existingUserWithThisUsername.isPresent()) {
+            return ResponseEntity.badRequest().body("Este 'username' já está em uso. Por favor, escolha outro.");
+        }
 
-            // LÓGICA PARA PROFESSOR: Senha é obrigatória
+        // 5. ATUALIZA o usuário existente com os novos dados
+        userToUpdate.setUsername(body.username());
+
+        // 6. Lógica da Senha (usando o tipo de usuário do BANCO DE DADOS)
+        String tipoUsuarioDoBanco = userToUpdate.getTipoUsuario();
+
+        if ("PROFESSOR".equalsIgnoreCase(tipoUsuarioDoBanco)) {
+            // Se for professor, a senha vinda do BODY é obrigatória
             if (body.senha() == null || body.senha().isEmpty()) {
                 return ResponseEntity.badRequest().body("Senha é obrigatória para PROFESSOR.");
             }
-            newUser.setSenha(passwordEncoder.encode(body.senha()));
+            userToUpdate.setSenha(passwordEncoder.encode(body.senha()));
 
-        } else if ("ALUNO".equalsIgnoreCase(body.tipoUsuario())) {
-
-            // LÓGICA PARA ALUNO: Senha deve ser nula
-            newUser.setSenha(null);
+        } else if ("ALUNO".equalsIgnoreCase(tipoUsuarioDoBanco)) {
+            // Se for aluno, a senha é SEMPRE nula, independente do que veio no body
+            userToUpdate.setSenha(null);
 
         } else {
-            return ResponseEntity.badRequest().body("Tipo de usuário inválido (use ALUNO ou PROFESSOR).");
+            // Este erro agora só aconteceria se o dado no banco estivesse corrompido
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Tipo de usuário inconsistente no banco de dados.");
         }
 
-        // 4. Salva o novo usuário no banco
-        this.repository.save(newUser);
+        // 7. Salva as ATUALIZAÇÕES no banco (isso fará um UPDATE)
+        this.repository.save(userToUpdate);
 
-        // 5. Gera um token para o novo usuário já sair logado
-        String token = this.tokenService.generateToken(newUser);
-        return ResponseEntity.ok(new ResponseDTO(newUser.getUsername(), token));
+        // 8. Gera um token para o usuário já sair logado
+        String token = this.tokenService.generateToken(userToUpdate);
+        return ResponseEntity.ok(new ResponseDTO(userToUpdate.getUsername(), token));
     }
 }

@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // Libera os endpoints de login e registro
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/auth/register/{id}").permitAll()
                         // Protege todo o resto
                         .anyRequest().authenticated()
                 )
