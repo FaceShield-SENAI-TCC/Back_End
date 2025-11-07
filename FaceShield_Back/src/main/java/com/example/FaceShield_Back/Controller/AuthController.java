@@ -56,7 +56,7 @@ public class AuthController {
         }
 
         // 3. Retorna o DTO de resposta com o token
-        return ResponseEntity.ok(new ResponseDTO(user.getNome(), token));
+        return ResponseEntity.ok(new ResponseDTO(user.getId(), user.getNome(), token));
     }
 
     /**
@@ -119,6 +119,6 @@ public class AuthController {
 
         // 8. Gera um token para o usuário já sair logado
         String token = this.tokenService.generateToken(userToUpdate);
-        return ResponseEntity.ok(new ResponseDTO(userToUpdate.getUsername(), token));
+        return ResponseEntity.ok(new ResponseDTO(userToUpdate.getId(), userToUpdate.getUsername(), token));
     }
 }
