@@ -4,6 +4,7 @@ import com.example.FaceShield_Back.Entity.Ferramentas;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FerramentasRepo extends JpaRepository<Ferramentas, Long> {
     // Metodo para buscar pelo nome
@@ -14,4 +15,7 @@ public interface FerramentasRepo extends JpaRepository<Ferramentas, Long> {
 
     // Buscar ferramentas por local
     List<Ferramentas> findByLocalId(Long idLocal);
+
+    // Buscar uma ferramenta pelo QR Code
+    // Optional<Ferramentas> findByQrCode(String qrcode);
 }

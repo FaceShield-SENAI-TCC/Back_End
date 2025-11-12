@@ -1,9 +1,15 @@
 package com.example.FaceShield_Back.Service;
 
 import com.example.FaceShield_Back.DTO.EmprestimosDTO;
+import com.example.FaceShield_Back.DTO.FerramentasDTO;
+import com.example.FaceShield_Back.DTO.UsuariosDTO;
 import com.example.FaceShield_Back.DTO.responses.EmprestimosResponseDTO;
 import com.example.FaceShield_Back.Entity.Emprestimos;
+import com.example.FaceShield_Back.Entity.Ferramentas;
+import com.example.FaceShield_Back.Entity.Usuarios;
 import com.example.FaceShield_Back.Repository.EmprestimosRepo;
+import com.example.FaceShield_Back.Repository.FerramentasRepo;
+import com.example.FaceShield_Back.Repository.UsuariosRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +57,49 @@ public class EmprestimosServ {
         emprestimo = repository.save(emprestimo);
         return EmprestimosResponseDTO.toDTO(emprestimo);
     }
+/*
+    // Criar empréstimo por QRCode e ID do usuário
+    public EmprestimosResponseDTO createEmprestimoByQRCode(String qrcode, Long usuarioId, String observacoes) {
+        // Buscar ferramenta pelo QRCode
+        Optional<Ferramentas> ferramentaOpt = FerramentasRepo.findByQrCode(qrcode);
+        if (ferramentaOpt.isEmpty()) {
+            throw new RuntimeException("Ferramenta não encontrada com o QRCode: " + qrcode);
+        }
+
+        // Buscar usuário pelo ID
+        Optional<Usuarios> usuarioOpt = UsuariosRepo.findById(usuarioId);
+        if (usuarioOpt.isEmpty()) {
+            throw new RuntimeException("Usuário não encontrado com ID: " + usuarioId);
+        }
+
+        Ferramentas ferramenta = ferramentaOpt.get();
+        Usuarios usuario = usuarioOpt.get();
+
+        // Verificar se a ferramenta já está emprestada
+        if (isFerramentaEmprestada(ferramenta.getId())) {
+            throw new RuntimeException("Ferramenta já está emprestada");
+        }
+
+        // Criar o DTO seguindo o mesmo padrão do metodo existente
+        EmprestimosDTO emprestimoDTO = new EmprestimosDTO();
+        emprestimoDTO.setData_retirada(LocalDateTime.now());
+        emprestimoDTO.setData_devolucao(null);
+        emprestimoDTO.setObservacoes(observacoes != null ? observacoes : "Empréstimo via QRCode");
+
+        // Converter as entidades para DTOs (JUNTANDO usuário ID e ferramenta QRCode)
+        emprestimoDTO.setUsuario(UsuariosDTO.toDTO(usuario));
+        emprestimoDTO.setFerramenta(new FerramentasDTO().fromFerramentas(ferramenta));
+
+        // Usar o metodo existente para criar o empréstimo
+        return createEmprestimo(emprestimoDTO);
+    }
+
+    // Metodo auxiliar para verificar se a ferramenta já está emprestada
+    private boolean isFerramentaEmprestada(Long ferramentaId) {
+        List<Emprestimos> emprestimosAtivos = repository.findByFerramentaEmprestimo(ferramentaId);
+        return !emprestimosAtivos.isEmpty();
+    }
+ */
 
     // Atualizar empréstimo existente (mantém EmprestimosDTO para input)
     public Optional<EmprestimosResponseDTO> updateEmprestimo(Long id, EmprestimosDTO dto) {
