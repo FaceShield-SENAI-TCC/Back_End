@@ -1,11 +1,13 @@
 package com.example.FaceShield_Back.Controller;
 
+import com.example.FaceShield_Back.DTO.Security.GenerateTokenRequestDTO;
+import com.example.FaceShield_Back.DTO.Security.GenerateTokenResponseDTO;
 import com.example.FaceShield_Back.DTO.Security.LoginRequestDTO;
 import com.example.FaceShield_Back.DTO.Security.RegisterRequestDTO;
 import com.example.FaceShield_Back.DTO.Security.ResponseDTO;
 import com.example.FaceShield_Back.Entity.Usuarios;
 import com.example.FaceShield_Back.Repository.UsuariosRepo;
-import com.example.FaceShield_Back.Service.Security.TokenService; // Verifique se esta importação está correta
+import com.example.FaceShield_Back.Service.Security.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -120,5 +122,50 @@ public class AuthController {
         // 8. Gera um token para o usuário já sair logado
         String token = this.tokenService.generateToken(userToUpdate);
         return ResponseEntity.ok(new ResponseDTO(userToUpdate.getId(), userToUpdate.getUsername(), token));
+    }
+
+    /**
+     * NOVO ENDPOINT - Gera token apenas com username
+     * Útil para quando o frontend precisa obter um token sem processo de login completo
+     */
+    @PostMapping("/generate-token")
+    public ResponseEntity<GenerateTokenResponseDTO> generateToken(@RequestBody GenerateTokenRequestDTO request) {
+
+        // Validação básica usando o método do seu DTO
+        if (!request.isValid()) {
+            return ResponseEntity.badRequest()
+                    .body(GenerateTokenResponseDTO.error(null, request.getUsername()));
+        }
+
+        try {
+            // Busca o usuário pelo username
+            Optional<Usuarios> usuarioOpt = this.repository.findByUsername(request.getCleanUsername());
+
+            if (usuarioOpt.isPresent()) {
+                Usuarios usuario = usuarioOpt.get();
+
+                // CORREÇÃO: Gera o token passando o objeto Usuarios completo
+                String token = this.tokenService.generateToken(usuario);
+
+                // Retorna a resposta usando o método success do seu DTO
+                GenerateTokenResponseDTO response = GenerateTokenResponseDTO.success(
+                        usuario.getId(),
+                        usuario.getUsername(),
+                        token
+                );
+
+                return ResponseEntity.ok(response);
+
+            } else {
+                // Usuário não encontrado - usa o método error do seu DTO
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(GenerateTokenResponseDTO.error(null, request.getUsername()));
+            }
+
+        } catch (Exception e) {
+            // Erro interno - usa o método error do seu DTO
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(GenerateTokenResponseDTO.error(null, request.getUsername()));
+        }
     }
 }
