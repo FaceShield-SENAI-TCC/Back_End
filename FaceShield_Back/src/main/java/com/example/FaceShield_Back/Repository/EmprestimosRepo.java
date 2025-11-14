@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EmprestimosRepo extends JpaRepository<Emprestimos, Long> {
     // Metodo para listar empréstimos de um usuário
@@ -20,4 +21,8 @@ public interface EmprestimosRepo extends JpaRepository<Emprestimos, Long> {
     // Metodo para verificar se a ferramenta está emprestada
     @Query("SELECT e FROM Emprestimos e WHERE e.ferramenta.id = :ferramentaId AND e.data_devolucao IS NULL")
     List<Emprestimos> findEmprestimosAtivosByFerramentaId(@Param("ferramentaId") Long ferramentaId);
+
+    // Metodo para verificar se um usuário tem um empréstimo ativo de uma ferramenta específica
+    @Query("SELECT e FROM Emprestimos e WHERE e.ferramenta.id = :ferramentaId AND e.usuario.id = :usuarioId AND e.data_devolucao IS NULL")
+    Optional<Emprestimos> findEmprestimoAtivoByFerramentaAndUsuario(@Param("ferramentaId") Long ferramentaId, @Param("usuarioId") Long usuarioId);
 }

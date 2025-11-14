@@ -2,6 +2,7 @@ package com.example.FaceShield_Back.Controller;
 
 import com.example.FaceShield_Back.DTO.EmprestimosDTO;
 import com.example.FaceShield_Back.DTO.EmprestimosRequestDTO;
+import com.example.FaceShield_Back.DTO.FinalizarEmprestimoRequestDTO;
 import com.example.FaceShield_Back.DTO.responses.EmprestimosResponseDTO;
 import com.example.FaceShield_Back.Service.EmprestimosServ;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,20 @@ public class EmprestimosController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro interno ao criar empréstimo: " + e.getMessage());
+        }
+    }
+
+    // Finalizar empréstimo por QRCode
+    @PutMapping("/finalizarEmprestimoQrcode")
+    public ResponseEntity<?> finalizarEmprestimoPorQRCode(@RequestBody FinalizarEmprestimoRequestDTO requestDTO) {
+        try {
+            EmprestimosResponseDTO emprestimoFinalizado = emprestimosServ.finalizarEmprestimoPorQRCode(requestDTO);
+            return ResponseEntity.ok(emprestimoFinalizado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro interno ao finalizar empréstimo: " + e.getMessage());
         }
     }
 

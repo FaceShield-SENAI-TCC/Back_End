@@ -2,6 +2,7 @@ package com.example.FaceShield_Back.Service;
 
 import com.example.FaceShield_Back.DTO.EmprestimosDTO;
 import com.example.FaceShield_Back.DTO.EmprestimosRequestDTO;
+import com.example.FaceShield_Back.DTO.FinalizarEmprestimoRequestDTO;
 import com.example.FaceShield_Back.DTO.responses.EmprestimosResponseDTO;
 import com.example.FaceShield_Back.Entity.Emprestimos;
 import com.example.FaceShield_Back.Entity.Ferramentas;
@@ -125,6 +126,32 @@ public class EmprestimosServ {
         atualizarDisponibilidadeFerramenta(ferramenta.getId(), false);
 
         return EmprestimosResponseDTO.toDTO(emprestimo);
+    }
+
+    // Finalizar empréstimo por QRCode
+    @Transactional
+    public EmprestimosResponseDTO finalizarEmprestimoPorQRCode(FinalizarEmprestimoRequestDTO requestDTO) {
+        // Buscar ferramenta pelo QRCode
+        Ferramentas ferramenta = ferramentasRepo.findByQrcode(requestDTO.getQrcodeFerramenta())
+                .orElseThrow(() -> new IllegalArgumentException("Ferramenta com QRCode " + requestDTO.getQrcodeFerramenta() + " não encontrada."));
+
+        // Buscar usuário pelo ID
+        Usuarios usuario = usuariosRepo.findById(requestDTO.getUsuarioId())
+                .orElseThrow(() -> new IllegalArgumentException("Usuário com ID " + requestDTO.getUsuarioId() + " não encontrado."));
+
+        // Buscar empréstimo ativo por ferramenta e usuário
+        Emprestimos emprestimo = repository.findEmprestimoAtivoByFerramentaAndUsuario(ferramenta.getId(), usuario.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Não foi encontrado empréstimo ativo para esta ferramenta e usuário."));
+
+        // Finalizar o empréstimo
+        emprestimo.setData_devolucao(requestDTO.getData_devolucao());
+
+        Emprestimos finalizado = repository.save(emprestimo);
+
+        // ATUALIZAR DISPONIBILIDADE DA FERRAMENTA PARA TRUE (devolvida)
+        atualizarDisponibilidadeFerramenta(ferramenta.getId(), true);
+
+        return EmprestimosResponseDTO.toDTO(finalizado);
     }
 
     // Atualizar empréstimo existente (mantém EmprestimosDTO para input)
