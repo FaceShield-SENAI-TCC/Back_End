@@ -11,6 +11,7 @@ import com.example.FaceShield_Back.Repository.FerramentasRepo;
 import com.example.FaceShield_Back.Repository.UsuariosRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,6 +58,7 @@ public class EmprestimosServ {
     }
 
     // Criar novo empréstimo (mantém EmprestimosDTO para input)
+    @Transactional
     public EmprestimosResponseDTO createEmprestimo(EmprestimosDTO emprestimoDTO) {
         // Verificar se a ferramenta já está em um empréstimo ativo
         Long ferramentaId = emprestimoDTO.getFerramenta().getId();
@@ -66,8 +68,20 @@ public class EmprestimosServ {
             throw new IllegalArgumentException("A ferramenta com ID " + ferramentaId + " já está em um empréstimo ativo.");
         }
 
+        // Verificar disponibilidade da ferramenta
+        Ferramentas ferramenta = ferramentasRepo.findById(ferramentaId)
+                .orElseThrow(() -> new IllegalArgumentException("Ferramenta com ID " + ferramentaId + " não encontrada."));
+
+        if (!ferramenta.isDisponibilidade()) {
+            throw new IllegalArgumentException("A ferramenta com ID " + ferramentaId + " não está disponível para empréstimo.");
+        }
+
         Emprestimos emprestimo = EmprestimosDTO.toEntity(emprestimoDTO);
         emprestimo = repository.save(emprestimo);
+
+        // ATUALIZAR DISPONIBILIDADE DA FERRAMENTA PARA FALSE
+        atualizarDisponibilidadeFerramenta(ferramentaId, false);
+
         return EmprestimosResponseDTO.toDTO(emprestimo);
     }
 
@@ -78,16 +92,22 @@ public class EmprestimosServ {
     }
 
     // Criar empréstimo por QRCode
+    @Transactional
     public EmprestimosResponseDTO createEmprestimoPorQRCode(EmprestimosRequestDTO requestDTO) {
         // Buscar ferramenta pelo QRCode
         Ferramentas ferramenta = ferramentasRepo.findByQrcode(requestDTO.getQrcodeFerramenta())
                 .orElseThrow(() -> new IllegalArgumentException("Ferramenta com QRCode " + requestDTO.getQrcodeFerramenta() + " não encontrada."));
 
+        // Verificar disponibilidade da ferramenta
+        if (!ferramenta.isDisponibilidade()) {
+            throw new IllegalArgumentException("A ferramenta com QRCode " + requestDTO.getQrcodeFerramenta() + " não está disponível para empréstimo.");
+        }
+
         // Buscar usuário pelo ID
         Usuarios usuario = usuariosRepo.findById(requestDTO.getUsuarioId())
                 .orElseThrow(() -> new IllegalArgumentException("Usuário com ID " + requestDTO.getUsuarioId() + " não encontrado."));
 
-        // Verificar se a ferramenta já está emprestada
+        // Verificar se a ferramenta já está emprestada (dupla verificação)
         boolean ferramentaEmUso = isFerramentaEmprestada(ferramenta.getId());
         if (ferramentaEmUso) {
             throw new IllegalArgumentException("A ferramenta com QRCode " + requestDTO.getQrcodeFerramenta() + " já está em um empréstimo ativo.");
@@ -100,6 +120,10 @@ public class EmprestimosServ {
         emprestimo.setData_retirada(requestDTO.getData_retirada());
 
         emprestimo = repository.save(emprestimo);
+
+        // ATUALIZAR DISPONIBILIDADE DA FERRAMENTA PARA FALSE
+        atualizarDisponibilidadeFerramenta(ferramenta.getId(), false);
+
         return EmprestimosResponseDTO.toDTO(emprestimo);
     }
 
@@ -117,6 +141,7 @@ public class EmprestimosServ {
     }
 
     // Finalizar empréstimo (marcar como devolvido)
+    @Transactional
     public Optional<EmprestimosResponseDTO> finalizarEmprestimo(Long id, LocalDateTime dataDevolucao, String observacoes) {
         return repository.findById(id)
                 .map(emprestimo -> {
@@ -125,16 +150,34 @@ public class EmprestimosServ {
                         emprestimo.setObservacoes(observacoes);
                     }
                     Emprestimos finalizado = repository.save(emprestimo);
+
+                    // ATUALIZAR DISPONIBILIDADE DA FERRAMENTA PARA TRUE (devolvida)
+                    atualizarDisponibilidadeFerramenta(emprestimo.getFerramenta().getId(), true);
+
                     return EmprestimosResponseDTO.toDTO(finalizado);
                 });
     }
 
     // Remover empréstimo (retorna booleano indicando sucesso)
+    @Transactional
     public boolean deleteEmprestimo(Long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
-            return true;
-        }
-        return false;
+        return repository.findById(id)
+                .map(emprestimo -> {
+                    // ATUALIZAR DISPONIBILIDADE DA FERRAMENTA PARA TRUE ao deletar empréstimo
+                    atualizarDisponibilidadeFerramenta(emprestimo.getFerramenta().getId(), true);
+
+                    repository.deleteById(id);
+                    return true;
+                })
+                .orElse(false);
+    }
+
+    // Metodo para atualizar disponibilidade da ferramenta
+    private void atualizarDisponibilidadeFerramenta(Long ferramentaId, boolean disponivel) {
+        Ferramentas ferramenta = ferramentasRepo.findById(ferramentaId)
+                .orElseThrow(() -> new IllegalArgumentException("Ferramenta não encontrada com ID: " + ferramentaId));
+
+        ferramenta.setDisponibilidade(disponivel);
+        ferramentasRepo.save(ferramenta);
     }
 }
