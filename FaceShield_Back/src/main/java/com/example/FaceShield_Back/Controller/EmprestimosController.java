@@ -1,6 +1,7 @@
 package com.example.FaceShield_Back.Controller;
 
 import com.example.FaceShield_Back.DTO.EmprestimosDTO;
+import com.example.FaceShield_Back.DTO.EmprestimosRequestDTO;
 import com.example.FaceShield_Back.DTO.responses.EmprestimosResponseDTO;
 import com.example.FaceShield_Back.Service.EmprestimosServ;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,20 @@ public class EmprestimosController {
     public ResponseEntity<EmprestimosResponseDTO> createEmprestimo(@RequestBody EmprestimosDTO emprestimosDTO) {
         EmprestimosResponseDTO novoEmprestimo = emprestimosServ.createEmprestimo(emprestimosDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoEmprestimo);
+    }
+
+    // Criar empréstimo por QRCode
+    @PostMapping("/novoEmprestimoQrcode")
+    public ResponseEntity<?> createEmprestimoPorQRCode(@RequestBody EmprestimosRequestDTO requestDTO) {
+        try {
+            EmprestimosResponseDTO novoEmprestimo = emprestimosServ.createEmprestimoPorQRCode(requestDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(novoEmprestimo);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro interno ao criar empréstimo: " + e.getMessage());
+        }
     }
 
     // Atualizar empréstimo existente
