@@ -14,7 +14,4 @@ public interface EmprestimosRepo extends JpaRepository<Emprestimos, Long> {
     // Metodo para listar empréstimos de uma ferramenta
     // Similarmente, o Spring Data JPA entende "findByFerramentaId"
     List<Emprestimos> findByFerramentaId(Long ferramentaId);
-
-    // Metodo para verificar emprestimos com ferramenta ativa
-    // List<Emprestimos> findByFerramentaEmprestimo(Long ferramentaId);
 }
