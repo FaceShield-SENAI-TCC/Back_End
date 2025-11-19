@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UsuariosRepo extends JpaRepository<Usuarios, Long> {
-    // Buscar por ID
-    //Optional<Usuarios> findById(Long id);
-
     // Metodo para buscar pelo nome
     List<Usuarios> findAllByNome(String nome);
 

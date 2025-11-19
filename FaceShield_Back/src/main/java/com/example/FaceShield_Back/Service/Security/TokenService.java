@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.FaceShield_Back.Entity.Usuarios;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,13 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
 
-    // Puxa o segredo do application.properties
     @Value("${api.security.token.secret}")
     private String secret;
+
+    @PostConstruct
+    public void testSecret() {
+        System.out.println(">>> SEGREDO CARREGADO = " + secret);
+    }
 
     public String generateToken(Usuarios user) {
         try {
