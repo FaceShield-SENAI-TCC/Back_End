@@ -33,16 +33,15 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
-                // 3. Mude a política de sessão para STATELESS (essencial para JWT)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // Libera os endpoints de login e registro
+                        // Libera os endpoints de autenticação
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/auth/register/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/generate-token").permitAll()
                         // Protege todo o resto
                         .anyRequest().authenticated()
                 )
-                // 4. Adiciona seu filtro para rodar antes do filtro padrão do Spring
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

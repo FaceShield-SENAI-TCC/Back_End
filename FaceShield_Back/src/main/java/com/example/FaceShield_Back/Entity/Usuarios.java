@@ -37,4 +37,8 @@ public class Usuarios {
     // Emprestimos
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Emprestimos> emprestimos; // Mapeado pelo atributo 'usuario' na classe Emprestimos
+
+    // HistoricoTrava
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<HistoricoTrava> historicoTravas;
 }
